@@ -1,3 +1,3 @@
 name,recordType,recordValue,ttl
 google.com,A,192.0.0.1,300
-google.com,AAAA,2607:f8b0:4009:80a::200e, 345
+google.com,AAAA,2607:f8b0:4009:80a::200e,345

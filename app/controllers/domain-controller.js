@@ -30,7 +30,6 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
 
        // Delete CSV file after processing
        fs.unlinkSync(req.file.path);
-
        res.status(200).json({fileMessage:'file uploaded successfully', dnsMessage: 'HostedZone created successfully' });
        
      })
@@ -60,7 +59,7 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
   }
   }catch(error){
     console.error('Error uploading  file:', error);
-    res.status(500).json({ message: 'Failed to upload file' });
+    res.status(500).json({error, msg: 'Failed to upload file' });
   }
   async function createHostedZone(domainNames) {
     for (const domainName of domainNames) {

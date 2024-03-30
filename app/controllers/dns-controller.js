@@ -223,7 +223,7 @@ dnsCtrl.createDNSRecord = async (req, res) => {
       res.status(201).json({newDNSRecord, message: 'DNS record created successfully' });
     } catch (error) {
         console.error('Error creating DNS record:', error);
-        res.status(500).json({ message: 'Failed to create DNS record' });
+        res.status(500).json({error, message: 'Failed to create DNS record' });
     }
 };
 
