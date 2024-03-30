@@ -21,6 +21,6 @@ app.listen(port,()=>{
     console.log( `Server is running on ${port}`)
 })
 
-app.post("/",(req,res)=>{
+app.get("/",(req,res)=>{
     res.send("<h1> Hello Server</h1>");
   })
