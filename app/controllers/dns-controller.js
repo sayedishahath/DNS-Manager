@@ -89,7 +89,7 @@ dnsCtrl.createBulkDNSRecord = async(req, res) => {
         return res.status(200).json({ fileMessage: 'File uploaded successfully', dnsMessage: 'Records created successfully' });
       } catch (error) {
         console.error('Error processing JSON file:', error);
-        return res.status(500).json({ message: 'Failed to process JSON file' });
+        return res.status(500).json({error, message: 'Failed to process JSON file' });
       }
     } else {
       return res.status(400).json({ message: 'Unsupported file type' });
