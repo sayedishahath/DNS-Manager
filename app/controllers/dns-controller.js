@@ -27,76 +27,7 @@ dnsCtrl.getDNSRecordById = async (req, res) => {
     }
 };
 
-// dnsCtrl.createBulkDNSRecord = async(req,res)=>{
-//   const hostedZoneId=req.params.hostedZoneId
-//   try{
-//     if (!req.file) {
-//       return res.status(400).json({ message: 'No file uploaded' });
-//     }
-//     // Parse CSV file
-//     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
-//     const records = [];
 
-//     if (fileExtension === 'csv'){
-//       fs.createReadStream(req.file.path)
-//         .pipe(csvParser())
-//         .on('data', (data) => {
-          
-//           records.push(data);
-//           // console.log(records)
-//         })
-//         .on('end', async () => {
-//          // Create hosted zone with array of domains
-//          const recordDatas = records.map(record => record);
-//          console.log(recordDatas)
-//          await addRecords(recordDatas);
-         
-//          // Delete CSV file after processing
-//          fs.unlinkSync(req.file.path);
-  
-//          res.status(200).json({fileMessage:'file uploaded successfully', dnsMessage: 'HostedZone created successfully' });
-         
-//        })
-//        .on('error', (error) => {
-//          console.error('Error parsing CSV file:', error);
-//          res.status(500).json({ message: 'Failed to parse CSV file' });
-//        });
-//       }
-//   }catch(error){
-//     console.error('Error uploading  file:', error);
-//     res.status(500).json({ message: 'Failed to upload file' });
-//   }
-
-//   async function addRecords(recordDatas) {
-//     for (const recordData of recordDatas) {
-//       const params = {
-//         ChangeBatch: {
-//           Changes: [
-//             {
-//               Action: 'CREATE',
-//               ResourceRecordSet: {
-//                 Name: recordData.name,
-//                 Type: recordData.recordType,
-//                 TTL: parseInt(recordData.ttl), 
-//                 ResourceRecords: [{ Value: recordData.recordValue }]
-//               }
-//             }
-//           ]
-//         },
-//         HostedZoneId: hostedZoneId
-//       };
-//       await route53.changeResourceRecordSets(params).promise();
-//       recordsToInsert = ({
-//         domain:recordData.name,
-//         recordType:recordData.recordType,
-//         recordValue:recordData.recordValue,
-//         ttl:recordData.ttl,
-//         zoneId:hostedZoneId})
-//         const newDNSRecord = await DNSRecord.insertMany(recordsToInsert);
-//         res.status(201).json({newDNSRecord, message: 'DNS record created successfully' });
-//     }
-//   } 
-// }
 dnsCtrl.createBulkDNSRecord = async(req, res) => {
   const hostedZoneId = req.params.hostedZoneId;
   try {
@@ -135,19 +66,33 @@ dnsCtrl.createBulkDNSRecord = async(req, res) => {
           res.status(500).json({ message: 'Failed to parse CSV file' });
         });
     }else if(fileExtension ==='json'){
-      fs.readFile(req.file.path, 'utf8', (err, data) => {
-        if (err) {
-          console.error('Error reading file:', err);
-          return;
-        }
-        const jsonData = JSON.parse(data);
-        // console.log(jsonData);
-            const recordDatas = jsonData.map(record => record);
-            console.log(recordDatas);
-            addRecords(recordDatas, hostedZoneId);
-          })
-            fs.unlinkSync(req.file.path);
-            res.status(200).json({ fileMessage: 'File uploaded successfully', dnsMessage: 'records created successfully' });            
+      // fs.readFile(req.file.path, 'utf8', (err, data) => {
+      //   if (err) {
+      //     console.error('Error reading file:', err);
+      //     return;
+      //   }
+      //   const jsonData = JSON.parse(data);
+      //   // console.log(jsonData);
+      //       const recordDatas = jsonData.map(record => record);
+      //       console.log(recordDatas);
+      //       addRecords(recordDatas, hostedZoneId);
+      //     })
+      //       fs.unlinkSync(req.file.path);
+      //       res.status(200).json({ fileMessage: 'File uploaded successfully', dnsMessage: 'records created successfully' });     
+      
+      try {
+        const jsonData = JSON.parse(fs.readFileSync(req.file.path, 'utf8'));
+        const recordDatas = jsonData.map(record => record);
+        console.log('JSON Records:', recordDatas);
+        await addRecords(recordDatas, hostedZoneId);
+        fs.unlinkSync(req.file.path);
+        return res.status(200).json({ fileMessage: 'File uploaded successfully', dnsMessage: 'Records created successfully' });
+      } catch (error) {
+        console.error('Error processing JSON file:', error);
+        return res.status(500).json({ message: 'Failed to process JSON file' });
+      }
+    } else {
+      return res.status(400).json({ message: 'Unsupported file type' });
     }
   } catch (error) {
     console.error('Error uploading file:', error);
