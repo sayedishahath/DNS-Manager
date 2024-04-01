@@ -85,8 +85,9 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
         ttl:"88640",
         zoneId:response.HostedZone.Id.replace('/hostedzone/','')})
         await DNSRecord.insertMany(recordsToInsert);
+        return domainsToInsert
     }
-    return domainsToInsert
+    
   } 
 }
  
