@@ -50,7 +50,8 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
 
         const domainNames = jsonData.map(record => record.domain);
         console.log(domainNames)
-        createHostedZone(domainNames);
+        console.log(createHostedZone(domainNames));
+
       })
      
     fs.unlinkSync(req.file.path);
@@ -85,6 +86,7 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
         zoneId:response.HostedZone.Id.replace('/hostedzone/','')})
         await DNSRecord.insertMany(recordsToInsert);
     }
+    return domainsToInsert
   } 
 }
  
