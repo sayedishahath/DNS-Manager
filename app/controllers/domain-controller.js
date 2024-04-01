@@ -50,19 +50,19 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
 
         const domainNames = jsonData.map(record => record.domain);
         console.log(domainNames)
-        console.log(createHostedZone(domainNames));
+        createHostedZone(domainNames);
 
       })
      
     fs.unlinkSync(req.file.path);
 
-    res.status(200).json({data:createHostedZone(domainNames),fileMessage:'file uploaded successfully', dnsMessage: 'Domains added successfully' });
+    // res.status(200).json({data:createHostedZone(),fileMessage:'file uploaded successfully', dnsMessage: 'Domains added successfully' });
   }
   }catch(error){
     console.error('Error uploading  file:', error);
     res.status(500).json({error, msg: 'Failed to upload file' });
   }
-  async function createHostedZone(domainNames) {
+  async function createHostedZone(res,domainNames) {
     for (const domainName of domainNames) {
       const params = {
         Name: domainName,
@@ -85,7 +85,7 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
         ttl:"88640",
         zoneId:response.HostedZone.Id.replace('/hostedzone/','')})
         await DNSRecord.insertMany(recordsToInsert);
-        console.log(insertedHostedZones)
+        res.status(200).json({data:insertedHostedZones,fileMessage:'file uploaded successfully', dnsMessage: 'Domains added successfully' });
     }
     
   } 
