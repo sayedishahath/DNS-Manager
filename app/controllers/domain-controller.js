@@ -50,7 +50,7 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
 
         const domainNames = jsonData.map(record => record.domain);
         console.log(domainNames)
-        createHostedZone(domainNames);
+        createHostedZone(domainNames,res);
 
       })
      
@@ -62,7 +62,7 @@ domainCtrl.uploadBukDomain = async(req,res)=>{
     console.error('Error uploading  file:', error);
     res.status(500).json({error, msg: 'Failed to upload file' });
   }
-  async function createHostedZone(res,domainNames) {
+  async function createHostedZone(domainNames,res) {
     for (const domainName of domainNames) {
       const params = {
         Name: domainName,
