@@ -65,21 +65,8 @@ dnsCtrl.createBulkDNSRecord = async(req, res) => {
           console.error('Error parsing CSV file:', error);
           res.status(500).json({ message: 'Failed to parse CSV file' });
         });
-    }else if(fileExtension ==='json'){
-      // fs.readFile(req.file.path, 'utf8', (err, data) => {
-      //   if (err) {
-      //     console.error('Error reading file:', err);
-      //     return;
-      //   }
-      //   const jsonData = JSON.parse(data);
-      //   // console.log(jsonData);
-      //       const recordDatas = jsonData.map(record => record);
-      //       console.log(recordDatas);
-      //       addRecords(recordDatas, hostedZoneId);
-      //     })
-      //       fs.unlinkSync(req.file.path);
-      //       res.status(200).json({ fileMessage: 'File uploaded successfully', dnsMessage: 'records created successfully' });     
-      
+    }else if(fileExtension ==='json'){ 
+    
       try {
         const jsonData = JSON.parse(fs.readFileSync(req.file.path, 'utf8'));
         const recordDatas = jsonData.map(record => record);
@@ -144,7 +131,7 @@ dnsCtrl.createDNSRecord = async (req, res) => {
     }
     try {
     const dnsRecord = new DNSRecord(req.body);
-    const  domain = await Domain.findOne({name: req.body.domain});
+    const  domain = await Domain.findOne({zoneId: req.params.hostedZoneId});
     console.log(domain)
     const params = {
         ChangeBatch: {
