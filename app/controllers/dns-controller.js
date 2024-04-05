@@ -147,7 +147,7 @@ dnsCtrl.createDNSRecord = async (req, res) => {
             }
           ]
         },
-        HostedZoneId: domain.zoneId
+        HostedZoneId: req.params.hostedZoneId
       };
       await route53.changeResourceRecordSets(params).promise();
       dnsRecord.zoneId=domain.zoneId;
